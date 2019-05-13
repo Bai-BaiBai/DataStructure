@@ -27,7 +27,7 @@ public class BST< E extends Comparable<E> > {
         this.size = 0;
     }
 
-    public int size(){
+    public int getSize(){
         return size;
     }
 
