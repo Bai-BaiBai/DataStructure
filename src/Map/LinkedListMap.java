@@ -1,5 +1,11 @@
 package Map;
 
+/**链表作为底层数据结构实现Map
+ * 通常无序映射使用Hash表实现，链表效率太低了
+ * 增、删、改、查操作时间复杂度都是O(n)
+ * @param <K>
+ * @param <V>
+ */
 public class LinkedListMap<K, V> implements Map<K, V> {
 
     private class Node{

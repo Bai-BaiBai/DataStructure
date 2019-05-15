@@ -4,6 +4,13 @@ import Set.FileOperation;
 
 import java.util.ArrayList;
 
+/**
+ * 使用二分搜索树作为底层数据结构实现的有序映射
+ * 增删改查的时间复杂度平均为O(h) = O(logn)
+ * 有局限性：二分搜索树可能退化为链表，时间复杂度最差为O(n)
+ * @param <K>
+ * @param <V>
+ */
 public class BSTMap< K extends Comparable<K>, V> implements Map<K, V>{
 
     private class Node{

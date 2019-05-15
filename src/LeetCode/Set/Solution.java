@@ -1,9 +1,9 @@
-package LeetCode.ListNode.LeetCode.Set;
+package LeetCode.Set;
 
 import java.util.TreeSet;
 
 /**
- * LeetCode 804问题
+ * LeetCode 804问题 使用Set集合解决
  */
 public class Solution {
 

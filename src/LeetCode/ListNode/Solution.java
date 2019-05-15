@@ -1,7 +1,5 @@
 package LeetCode.ListNode;
 
-import Array.Array;
-
 public class Solution {
 
     public ListNode removeElements(ListNode head, int val) {
