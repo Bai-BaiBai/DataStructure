@@ -155,6 +155,7 @@ public class MaxHeap<E extends Comparable<E> > {
             }
             E rightVal = data.get(rchild);//将右节点的值暂存方便使用
 
+            /*下面有对该if条件判断的优化，使三次compareTo变成两次
             if (cur.compareTo(leftVal) < 0 || cur.compareTo(rightVal) < 0) {//如果左右子节点其中有一个比父节点大则进入分支，反之不做操作
 
                 if (leftVal.compareTo(rightVal) >= 0) {//如果左节点大于等于右节点，就用左节点元素替换父节点元素
@@ -165,7 +166,37 @@ public class MaxHeap<E extends Comparable<E> > {
                     __sifDown(rchild);
                 }
             }
+
+             */
+
+            //先判断出左右节点中大的那个，再用它和根节点判断要不要交换
+            if (leftVal.compareTo(rightVal) >= 0){
+                if (cur.compareTo(leftVal) < 0){
+                    data.swap(index, lchild);
+                    __siftDown(lchild);
+                }
+            }else {
+                if (cur.compareTo(rightVal) < 0){
+                    data.swap(index, rchild);
+                    __siftDown(rchild);
+                }
+            }
         }
+    }
+
+    public E findMax(){
+        if (data.getSize() == 0) throw new IllegalArgumentException("heap is empty");
+        return data.get(0);
+    }
+
+    //取出堆中最大元素，并放入一个新的元素
+    //可以通过先执行extractMax再执行add来实现，这样的话需要两次O(logn)的操作
+    // 另一种实现是直接将堆顶元素替换为新元素，再进行SiftDown，只需一次O(logn)操作
+    public E replace(E e){
+        E max = findMax();
+        data.set(0, e);
+        __siftDown(0);
+        return max;
     }
 
     public static void main(String[] args) {
