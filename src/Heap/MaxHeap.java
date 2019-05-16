@@ -199,21 +199,14 @@ public class MaxHeap<E extends Comparable<E> > {
         return max;
     }
 
-    public static void main(String[] args) {
-        int n = 100;
-        MaxHeap<Integer> heap = new MaxHeap<>();
-        Random random = new Random();
-        for (int i = 0; i < n; i++) {
-            heap.add(random.nextInt(1000));
-        }
-        int[] arr = new int[n];
-        for (int i = 0; i < n; i++) {
-            arr[i] = heap.extractMax();
-        }
-
-        for (int i = 0; i < n; i++) {
-            System.out.print(arr[i] + " ");
+    //使用构造函数的方式进行heapify，将任意数组整理成堆
+    //策略是直接将数组作为堆，从最后一个非叶子节点开始逐个进行SiftDown
+    //这样做的好处是，直接排除掉了一半的元素(叶子节点)，只需要对叶子节点进行SiftDown，时间复杂度是O(n)
+    //如果将数组中元素逐个add进堆，时间复杂度是O(nlogn)
+    public MaxHeap(E[] arr){
+        data = new Array<>(arr); //将arr数组转化成包装类Array,并赋引用给data
+        for (int i = getParent(arr.length-1 ); i >= 0 ; i--) {//从最后一个非叶子节点开始逐个进行下沉
+            __siftDown(i);
         }
     }
-
 }
