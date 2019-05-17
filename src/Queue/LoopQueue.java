@@ -1,5 +1,9 @@
 package Queue;
 
+/**
+ * 循环队列数组实现
+ * @param <E>
+ */
 public class LoopQueue<E> implements Queue<E> {
 
     private E[] data;
