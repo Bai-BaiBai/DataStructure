@@ -6,6 +6,12 @@ import Stack.ArrayStack;
 
 import java.util.Random;
 
+/**
+ * 二分搜索树的实现
+ * 添加删除操作的时间复杂度是O(logn)
+ * 缺点是可能退化成链表，变成O(n)
+ * @param <E>
+ */
 public class BST< E extends Comparable<E> > {
 
     private class Node{
