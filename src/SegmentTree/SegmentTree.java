@@ -46,7 +46,8 @@ public class SegmentTree<E> {
     //在treeIndex位置创建表示区间[l ... r]的线段树
     //初始传入tree[0], 对应的区间是 data[0...n]
     private void buildSegmentTree(int treeIndex, int l, int r){
-        if (l == r){ //当区间内只有一个元素，该元素作为叶子节点存入tree[treeIndex]
+        //当区间内只有一个元素，该元素作为叶子节点存入tree[treeIndex]
+        if(l == r){
             tree[treeIndex] = data[l];
             return;
         }
@@ -60,7 +61,7 @@ public class SegmentTree<E> {
 
         //之后的逻辑取决于具体需求，可以将需求写入到Merger的实现中
         //如果是对区间内元素求和可以存储左右子树元素相加结果，如果取最大值可以存储两个孩子的最大元素
-        tree[treeIndex] = merger.merge(data[leftChildIndex], data[rightChildIndex]);
+        tree[treeIndex] = merger.merge(tree[leftChildIndex], tree[rightChildIndex]);
     }
 
     @Override
