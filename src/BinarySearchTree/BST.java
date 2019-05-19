@@ -95,11 +95,14 @@ public class BST< E extends Comparable<E> > {
     }
 
     //非递归实现中序遍历
+    //中序遍历是访问该节点第二次时输出节点(总共访问三次)
+    //策略是设置指针指向根节点，当该节点不为空时
+    //先将该节点添加进栈中，再访问左节点，当左节点为空时，出栈节点并输出，然后访问右节点
     public void midOrderNR(){
         ArrayStack<Node> stack = new ArrayStack<Node>();
         Node cur = root;
 
-        while (cur != null || !stack.isEmpty()) {
+        while (cur != null || !stack.isEmpty()) {//这里判断栈不为空是为了第二次访问输出后，向树的上层返回(也就是出栈栈中的元素)
             while (cur != null) {
                 stack.push(cur);
                 cur = cur.left;
@@ -107,7 +110,7 @@ public class BST< E extends Comparable<E> > {
             if (!stack.isEmpty()) {
                 cur = stack.pop();
                 System.out.print(cur.e + " ");
-                cur = cur.right;
+                cur = cur.right; //将指针指向右节点后，再去找它的左节点，重复之前逻辑
             }
         }
         System.out.println();
