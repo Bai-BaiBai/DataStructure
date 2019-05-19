@@ -2,6 +2,7 @@ package SegmentTree;
 
 /**
  * 线段树的数组实现
+ * API接口有get、getSize、query(L,R)
  * @param <E>
  */
 public class SegmentTree<E> {
@@ -42,6 +43,7 @@ public class SegmentTree<E> {
     }
     //由于在线段树中只涉及到元素的修改，不需要找父亲节点，所以不需要parent函数
 
+
     //创建线段树，传入 当前需要创建的节点对应的下标 和 该节点存储的区间边界(在data数组中的边界)
     //在treeIndex位置创建表示区间[l ... r]的线段树
     //初始传入tree[0], 对应的区间是 data[0...n]
@@ -62,6 +64,32 @@ public class SegmentTree<E> {
         //之后的逻辑取决于具体需求，可以将需求写入到Merger的实现中
         //如果是对区间内元素求和可以存储左右子树元素相加结果，如果取最大值可以存储两个孩子的最大元素
         tree[treeIndex] = merger.merge(tree[leftChildIndex], tree[rightChildIndex]);
+    }
+
+    //返回区间[queryL...queryR]的值
+    public E query(int queryL, int queryR){
+        if (queryL < 0 || queryL >= data.length || queryR < 0 || queryR >= data.length || queryL > queryR)
+            throw new IllegalArgumentException("index is illegal");
+        if (queryL == queryR) return data[queryL];
+        return __query(0, 0, data.length-1, queryL, queryR);
+    }
+
+    //在以treeIndex为根的线段树中[l...r]的范围内，搜索区间[queryL...queryR]的值
+    private E __query(int treeIndex, int l, int r, int queryL, int queryR){
+        if (l == queryL && r == queryR) return tree[treeIndex];
+
+        int leftChildIndex = leftChild(treeIndex);
+        int rightChildIndex = rightChild(treeIndex);
+        int mid = l + (r-l)/2;
+
+        if (queryL >= mid+1){ //如果搜索区间在右节点区间内
+            return __query(rightChildIndex, mid+1, r, queryL, queryR);
+        }else if (queryR <= mid){//如果搜索区间在左节点区间内
+            return __query(leftChildIndex, l, mid, queryL, queryR);
+        }else {//如果搜索区间与两个子区间都有交集，分别在子区间中搜索值
+            return merger.merge(__query(leftChildIndex, l, mid, queryL, mid),
+                                __query(rightChildIndex, mid+1, r, mid+1, queryR));
+        }
     }
 
     @Override
