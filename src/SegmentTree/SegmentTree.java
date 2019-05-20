@@ -3,7 +3,8 @@ package SegmentTree;
 /**
  * 线段树的数组实现
  * API接口有get、getSize、query(L,R)、set(index, e)
- *  * query和set操作时间复杂度是O(logn)级别
+ * 线段树初始化时间复杂度为O(4n)，因为开辟空间为4n，要对这些空间赋值基本等于遍历
+ * query和set操作时间复杂度是O(logn)级别
  * @param <E>
  */
 public class SegmentTree<E> {
