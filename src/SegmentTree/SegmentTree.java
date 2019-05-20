@@ -2,7 +2,8 @@ package SegmentTree;
 
 /**
  * 线段树的数组实现
- * API接口有get、getSize、query(L,R)
+ * API接口有get、getSize、query(L,R)、set(index, e)
+ *  * query和set操作时间复杂度是O(logn)级别
  * @param <E>
  */
 public class SegmentTree<E> {
@@ -91,6 +92,33 @@ public class SegmentTree<E> {
                                 __query(rightChildIndex, mid+1, r, mid+1, queryR));
         }
     }
+
+    //将data[index]位置的值更新为e
+    public void set(int index, E e){
+        if (index < 0 || index >= data.length) throw new IllegalArgumentException("index is illegal");
+
+        data[index] = e;
+        __set(0, 0, data.length-1, index, e);
+    }
+
+    //在以treeIndex为根的线段树中更新index的值为e，l和r是线段树的区间
+    private void __set(int treeIndex, int l, int r, int index, E e){
+        if (l == r){ // l = r = index 找到该节点，进行更新
+            tree[treeIndex] = e;
+            return;
+        }
+
+        int mid = l + (r-l)/2;
+        int leftChildIndex = leftChild(treeIndex);
+        int rightChildIndex = rightChild(treeIndex);
+        if (index >= mid+1){//如果index在右区间内
+            __set(rightChildIndex, mid+1, r, index, e);
+        }else {
+            __set(leftChildIndex, l, mid, index, e);
+        }
+        tree[treeIndex] = merger.merge(tree[leftChildIndex], tree[rightChildIndex]); //合并子区间的值到treeIndex
+    }
+
 
     @Override
     public String toString() {
