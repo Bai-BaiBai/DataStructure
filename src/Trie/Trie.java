@@ -6,6 +6,7 @@ import java.util.TreeMap;//底层用红黑树实现
  * Trie(字典树)是一种专门用于处理字符串的树结构
  * 如果有n个条目，使用普通的BST查询的时间复杂度是O(logn)
  * Trie查询每个条目的时间复杂度与字典中的条目数量无关！与字符串长度w有关，为O(w)
+ * 同时也是LeetCode208号问题的答案
  */
 public class Trie {
 
@@ -67,5 +68,16 @@ public class Trie {
             cur = cur.next.get(c);
         }
         return cur.isWord;//此时cur指向word最后一个字符的节点
+    }
+
+    //查询Trie中是否有单词以prefix为前缀
+    public boolean isPrefix(String prefix){
+        Node cur = root;
+        for (int i = 0; i < prefix.length(); i++) {
+            char c = prefix.charAt(i);
+            if (cur.next.get(c) == null) return false;
+            cur = cur.next.get(c);
+        }
+        return true;
     }
 }
