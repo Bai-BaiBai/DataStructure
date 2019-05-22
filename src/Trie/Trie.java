@@ -80,4 +80,39 @@ public class Trie {
         }
         return true;
     }
+
+    public boolean remove(String word){
+        if (contains(word)) { //只有包含该字符串才进行删除
+            root.next.remove(__remove(root, word, 0));
+            return true;
+        }else {
+            return false;
+        }
+    }
+
+    /*递归删除字符串
+      思想是每到一个节点均调用一次Map的删除操作，具体删除哪个字符节点 取决于下一次递归的返回值；
+      递归终止情况：到达word的结尾字符节点时 使node.isWord=false,不调用Map的删除操作，只判断这个字符是否要被删除
+      判断的逻辑是：node.next.isEmpty && node,isWord 同时成立，代表当前节点即没有后继节点，又不是单词结尾
+      判断成立则返回该节点对应的字符，也就是word[index-1]
+      判断不成立则返回一个无效字符 '.' (这里默认Trie只存字母)
+      这样在归的过程中即完成了对多余字符节点的删除
+     */
+    private char __remove(Node node, String word, int index){
+        //如果index超出word界限，当前node指向word的最后一个字符的节点，将该字符isWord=false
+        if (index == word.length()){
+            node.isWord = false;
+            size --;
+        }else {//如果node指向word中某个字符的节点，执行递归删除后续节点操作
+            char c = word.charAt(index);
+            node.next.remove(__remove(node.next.get(c), word, index + 1));
+        }
+
+        //如果该节点没有后续节点，并且该节点不是字符串结尾，那么就返回该节点字符；否则返回一个无意义的字符给上个节点来删除
+        if (node.next.isEmpty() && !node.isWord){
+            return word.charAt(index-1);//注意有1的偏移量，例如word为panda，在最后一个节点时，node代表的字符是a,但index=5，所以index-1
+        }else {
+            return '.';
+        }
+    }
 }
