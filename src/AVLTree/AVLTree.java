@@ -1,5 +1,7 @@
 package AVLTree;
 
+import Set.FileOperation;
+
 import java.util.ArrayList;
 
 /**
@@ -72,7 +74,7 @@ public class AVLTree< K extends Comparable<K>, V > {
         return isBalance(root);
     }
 
-    private boolean isBalance(Node node){
+    public boolean isBalance(Node node){
         if (node == null) return true;
         if (Math.abs(getBalanceFactor(node)) > 1) return false;
         return isBalance(node.left) && isBalance(node.right);//左右两棵子树均平衡
