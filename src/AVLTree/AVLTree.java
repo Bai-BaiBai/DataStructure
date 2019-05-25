@@ -6,15 +6,16 @@ import java.util.ArrayList;
 
 /**
  * AVL树的实现
- * 一种平衡二叉树
+ * 一种平衡二叉树：保证不会退化成链表，查询时间复杂度为O(logn)
  * 在BSTMap的代码上进行修改：
- *      Node节点添加height并维护
- *      添加平衡因子的计算：getBalanceFactor
- *      在add过程中根据平衡因子维护树：针对每个节点递归回来时，height=左右子树高度最大值+1
- *      判断该树是否是一棵平衡二叉树：isBST
- *      判断该树是否是平衡二叉树：isBalance
- *      每次递归add的过程，回溯的时候判断每个节点的平衡因子的值，不平衡又分为LL、RR、LR、RL四种情况，
- *      LL进行右旋转；RR左旋转；LR先左旋变LL再右旋；RL先右旋变RR再左旋
+ *      增加属性：Node节点添加height属性
+ *      增加方法：getBalanceFactor 平衡因子的计算
+ *      增加方法：判断该树是否是一棵平衡二叉树：isBST
+ *      增加方法：判断该树是否是平衡二叉树：isBalance
+ *      增加内容：
+ *          在add、remove过程中根据平衡因子维护树：针对每个节点递归回来时，height=左右子树高度最大值+1
+ *          每次递归add、remove的过程，回溯的时候判断每个节点的平衡因子的值，不平衡又分为LL、RR、LR、RL四种情况，
+ *          LL进行右旋转；RR左旋转；LR先左旋变LL再右旋；RL先右旋变RR再左旋
  */
 public class AVLTree< K extends Comparable<K>, V > {
 
@@ -153,13 +154,13 @@ public class AVLTree< K extends Comparable<K>, V > {
             node.value = value;
         }
 
-        //更新height值--添加节点或更新节点后，都重新计算一下高度值，取左右子树的最大高度+1
+        //1.更新height值--添加节点或更新节点后，都重新计算一下高度值，取左右子树的最大高度+1
         node.height = 1 + Math.max(getHeight(node.left), getHeight(node.right));
 
-        //计算平衡因子, >0代表左高，<0代表右高
+        //2.计算平衡因子, >0代表左高，<0代表右高
         int balanceFactor = getBalanceFactor(node);
 
-        //维护平衡性
+        //3.维护平衡性
         //LL表示：新插入的节点是在不平衡节点的左孩子的左孩子中插入的，RR、LR、RL同理
         if (balanceFactor > 1 && getBalanceFactor(node.left) >= 0){//LL整棵树完全左倾，右旋转
             return rightRotate(node);//此时return的是原先node.left
@@ -222,31 +223,60 @@ public class AVLTree< K extends Comparable<K>, V > {
     private Node __remove(Node node, K key){
         if (node == null) return null;//此条件在该应用下无法触发，因为调用前已经判断了是否存在key的节点，但是为了规范还是应该写明
 
+        Node retNode;
         if (key.compareTo(node.key) < 0){
             node.left = __remove(node.left, key);
-            return node;
+            retNode = node;
         }else if (key.compareTo(node.key) > 0){
             node.right = __remove(node.right, key);
-            return node;
+            retNode =  node;
         }else {
-            if (node.left == null) {
+            if (node.left == null) {//待删除节点左子树为空的情况
                 Node rightNode = node.right;
                 node.right = null;
                 size --;
-                return rightNode;//可以直接返回node.right，手动的置null一下可能利于垃圾回收吧？
-            }
-            if (node.right == null){
+                retNode = rightNode;
+            }else if (node.right == null){//待删除节点右子树为空的情况
                 Node leftNode = node.left;
                 node.left = null;
                 size --;
-                return leftNode;
+                retNode = leftNode;
+            }else {//待删除节点左右子树均不为空的情况
+                Node newNode = __getMinimun(node.right);//从右子树中选出一个最小节点，也就是比该节点大的节点，替换它的位置
+                newNode.right = __remove(node.right, newNode.key);//删除右子树中最小节点，这里复用remove函数，来维护height值
+                newNode.left = node.left;//这三步是将右子树中最小的节点作为该树的新根，相当于删除了原本的根节点，也就是删除了key对应的节点
+                node.left = node.right = null;
+                retNode = newNode;
             }
-            Node newNode = __getMinimun(node.right);//从右子树中选出一个最小节点，也就是比该节点大的节点，替换它的位置
-            newNode.right = __removeMinimum(node.right);
-            newNode.left = node.left;//这三步是将右子树中最小的节点作为该树的新根，相当于删除了原本的根节点，也就是删除了key对应的节点
-            node.left = node.right = null;
-            return newNode;
         }
+
+        if (retNode == null) return null; //维护平衡性之前判断返回节点是否为null
+
+        {//更新返回节点的height值并且维护平衡性
+
+            //1.更新height值--添加节点或更新节点后，都重新计算一下高度值，取左右子树的最大高度+1
+            retNode.height = 1 + Math.max(getHeight(retNode.left), getHeight(retNode.right));
+
+            //2.计算平衡因子, >0代表左高，<0代表右高
+            int balanceFactor = getBalanceFactor(retNode);
+
+            //3.维护平衡性
+            //LL表示：新插入的节点是在不平衡节点的左孩子的左孩子中插入的，RR、LR、RL同理
+            if (balanceFactor > 1 && getBalanceFactor(retNode.left) >= 0) {//LL整棵树完全左倾，右旋转
+                return rightRotate(retNode);//此时return的是原先node.left
+            } else if (balanceFactor < -1 && getBalanceFactor(retNode.right) <= 0) {//RR整棵树完全右倾斜，左旋转
+                return leftRotate(retNode);
+            } else if (balanceFactor > 1 && getBalanceFactor(retNode.left) < 0) {// LR
+                retNode.left = leftRotate(retNode.left);//将左孩子进行左旋转，LR转变成LL
+                return rightRotate(retNode);
+            } else if (balanceFactor < -1 && getBalanceFactor(retNode.right) > 0) {// RL
+                retNode.right = rightRotate(retNode.right);//将右孩子进行右旋转，RL转变成RR
+                return leftRotate(retNode);
+            }
+
+        }
+
+        return retNode;
     }
 
     //返回以node为根的树中最小元素节点
@@ -256,20 +286,5 @@ public class AVLTree< K extends Comparable<K>, V > {
             return node;
         }
         return __getMinimun(node.left);
-    }
-
-    //删除以node为根的树中的最小元素并返回新的根节点
-    private Node __removeMinimum(Node node){
-        if (node == null) return null;
-
-        if (node.left != null){
-            node.left = __removeMinimum(node.left);
-        }else {
-            Node rightNode = node.right;
-            node.right = null;
-            size --;
-            node = rightNode;
-        }
-        return node;
     }
 }

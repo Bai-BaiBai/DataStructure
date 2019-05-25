@@ -30,8 +30,19 @@ public class Main {
 
             System.out.println("is BST : " + map.isBST());
             System.out.println("is Balanced : " + map.isBalance());
+
+            for (String word : words) {
+                if (map.contains(word)) {
+                    map.remove(word);
+                    if (!map.isBST() || !map.isBalance())
+                        throw new RuntimeException("Error");
+                }
+            }
+
+            System.out.println(map.getSize());
         }
 
         System.out.println();
+        System.out.println("OK");
     }
 }
