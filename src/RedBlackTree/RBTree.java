@@ -11,8 +11,9 @@ import java.util.ArrayList;
  * 保持"黑平衡"的二叉树，严格意义上不是平衡二叉树
  * 最大高度2logn,增删改查时间复杂度O(logn)
  * 与AVL树对比：
+ *      数据量小时，虽然红黑树的理论时间复杂度更低，但是更简单的二分搜索树或AVL树效率更高
  *      查询频繁时，AVL树的性能高，因为AVL树的最大高度是logn
- *      增加和删除频繁时，红黑树的性能高，因为AVL树有旋转操作的开销
+ *      增加和删除频繁时，红黑树的性能高，
  */
 public class RBTree< K extends Comparable<K>, V> {
 
@@ -124,6 +125,20 @@ public class RBTree< K extends Comparable<K>, V> {
             node.right = __add(node.right, key, value);
         }else { //key.compareTo(node.key) = 0
             node.value = value;
+        }
+
+        //维护红黑树的黑平衡，以下三个if不能写成if..else，因为它有可能执行完一个if后又触发了后面的条件
+        //如果node的右孩子是RED节点，同时左孩子不是RED(如果都是RED，只需进行颜色翻转)
+        if (isRed(node.right) && !isRed(node.left)){
+            node = leftRotate(node);
+        }
+        //如果node.left和 node.left.left都是RED节点
+        if (isRed(node.left) && isRed(node.left.left)){
+            node = rightRotate(node);
+        }
+        //如果node.left和node.right都是RED节点
+        if (isRed(node.left) && isRed(node.right)){
+            flipColors(node);
         }
 
         return node;
