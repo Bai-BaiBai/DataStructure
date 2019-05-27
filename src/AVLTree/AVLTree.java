@@ -16,6 +16,9 @@ import java.util.ArrayList;
  *          在add、remove过程中根据平衡因子维护树：针对每个节点递归回来时，height=左右子树高度最大值+1
  *          每次递归add、remove的过程，回溯的时候判断每个节点的平衡因子的值，不平衡又分为LL、RR、LR、RL四种情况，
  *          LL进行右旋转；RR左旋转；LR先左旋变LL再右旋；RL先右旋变RR再左旋
+ *
+ *          remove时，不调用之前的__removeMinimum方法删除右节点中最小的元素，而是暂存最小节点并复用__remove(node.right, minKey)去删除该节点
+ *          这是因为在__removeMinimum中维护高度可能会出BUG，
  */
 public class AVLTree< K extends Comparable<K>, V > {
 
