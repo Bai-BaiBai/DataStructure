@@ -21,3 +21,5 @@ Trie字典树的树+Map实现；
 AVLTree的实现(基于BSTMap修改)
 
 红黑树的实现(基于BSTMap修改)
+
+哈希表的实现(底层使用ju包的TreeMap)
